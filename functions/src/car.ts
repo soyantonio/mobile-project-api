@@ -1,9 +1,18 @@
 import * as express from "express";
+import {RequestWithUser, ensureAuthenticated} from "./middlewares";
 
 export const car = express();
 
-car.post("/", (req, res) => {
-    res.send("Creating car...");
+car.use(ensureAuthenticated);
+car.post("/", (req: RequestWithUser, res) => {
+    const user = req.user;
+    if (user == undefined) {
+        res.sendStatus(403);
+        return;
+    }
+
+    console.log(user);
+    res.send(`Creating car... ${user}`);
 });
 
 car.get("/", (req, res) => {

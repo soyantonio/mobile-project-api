@@ -1,0 +1,32 @@
+import * as jwt from "jwt-simple";
+import * as dayjs from "dayjs";
+import {Request, Response, NextFunction} from "express";
+import {TOKEN_SECRET} from "./config";
+
+export interface RequestWithUser extends Request {
+    user?: string;
+}
+
+export const ensureAuthenticated = (
+    req: RequestWithUser, res: Response, next: NextFunction
+): void => {
+    if (!req.headers.authorization) {
+        res.status(403).send({
+            message: "Authorization header not found",
+        });
+        return;
+    }
+
+    const token = req.headers.authorization.split(" ")[1];
+    const payload = jwt.decode(token, TOKEN_SECRET);
+
+    if (payload.exp <= dayjs().unix()) {
+        res.status(401).send({
+            message: "The token has expired",
+        });
+        return;
+    }
+
+    req.user = payload.sub;
+    next();
+};
