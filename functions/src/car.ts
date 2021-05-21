@@ -1,9 +1,11 @@
 import * as express from "express";
-import {RequestWithUser, ensureAuthenticated} from "./middlewares";
+import {RequestWithUser, ensureAuthenticatedFirebase} from "./middlewares";
 
 export const car = express();
 
-car.use(ensureAuthenticated);
+// car.use(ensureAuthenticated);
+car.use(ensureAuthenticatedFirebase);
+
 car.post("/", (req: RequestWithUser, res) => {
     const user = req.user;
     if (user == undefined) {
