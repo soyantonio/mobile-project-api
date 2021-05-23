@@ -23,7 +23,7 @@ const registerSchema: JTDSchemaType<IRegister> = {
     },
 };
 
-user.post("/", async (req, res): Promise<void> => {
+user.post("/signup", async (req, res): Promise<void> => {
     const validateRegister = ajv.compile(registerSchema);
     if (!validateRegister(req.body)) {
         res.status(400).send(validateRegister.errors).end();

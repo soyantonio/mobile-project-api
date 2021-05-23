@@ -4,10 +4,8 @@ import * as admin from "firebase-admin";
 import {Request, Response, NextFunction} from "express";
 import {TOKEN_SECRET} from "./config";
 
-const auth = admin.auth();
-
 export interface RequestWithUser extends Request {
-    user?: admin.auth.DecodedIdToken;
+    user?: admin.auth.UserRecord;
 }
 
 export const ensureAuthenticatedFirebase = async (
@@ -22,7 +20,8 @@ export const ensureAuthenticatedFirebase = async (
     const token = req.headers.authorization.split(" ")[1];
 
     try {
-        req.user = await auth.verifyIdToken(token);
+        const verifiedToken = await admin.auth().verifyIdToken(token);
+        req.user = await admin.auth().getUser(verifiedToken.uid);
         next();
     } catch (e) {
         res.status(401).send({
