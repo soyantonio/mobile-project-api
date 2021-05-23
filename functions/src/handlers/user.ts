@@ -1,23 +1,13 @@
 import "module-alias/register";
 import * as express from "express";
+import firebase from "firebase/app";
+import "firebase/auth";
 import Ajv, {JTDSchemaType} from "ajv/dist/jtd";
-import {createToken} from "@src/services";
+import {ILogin, IRegister} from "./user.type";
 
 const ajv = new Ajv();
 
 export const user = express();
-
-interface ILogin {
-    email: string
-    password: string
-}
-
-
-interface IRegister {
-    id: string
-    email: string
-    password: string
-}
 
 const loginSchema: JTDSchemaType<ILogin> = {
     properties: {
@@ -26,30 +16,35 @@ const loginSchema: JTDSchemaType<ILogin> = {
     },
 };
 
-
 const registerSchema: JTDSchemaType<IRegister> = {
     properties: {
-        id: {type: "string"},
         email: {type: "string"},
         password: {type: "string"},
     },
 };
 
-user.post("/", (req, res) => {
+user.post("/", async (req, res): Promise<void> => {
     const validateRegister = ajv.compile(registerSchema);
     if (!validateRegister(req.body)) {
         res.status(400).send(validateRegister.errors).end();
         return;
     }
     const payload: IRegister = req.body as IRegister;
-    console.log(payload);
 
-    res.send({
-        token: createToken("helloWorld"),
-    });
+    try {
+        const userCredential = await firebase.auth()
+            .createUserWithEmailAndPassword(payload.email, payload.password);
+        res.send({
+            token: await userCredential.user?.getIdToken(),
+        });
+    } catch (e) {
+        res.status(401).send({
+            message: e.message,
+        });
+    }
 });
 
-user.post("/login", (req, res) => {
+user.post("/login", async (req, res): Promise<void> => {
     const validateLogin = ajv.compile(loginSchema);
     if (!validateLogin(req.body)) {
         res.status(400).send(validateLogin.errors).end();
@@ -58,11 +53,17 @@ user.post("/login", (req, res) => {
 
     const payload: ILogin = req.body as ILogin;
 
-    // admin.auth().
-
-    console.log(payload);
-
-    res.send({
-        token: createToken("helloWorld"),
-    });
+    try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(
+            payload.email,
+            payload.password
+        );
+        res.send({
+            token: await userCredential.user?.getIdToken(),
+        });
+    } catch (e) {
+        res.status(401).send({
+            message: "Could not sign in",
+        });
+    }
 });
