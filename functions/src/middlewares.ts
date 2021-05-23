@@ -14,7 +14,7 @@ export interface RequestWithUser extends Request {
 
 export const ensureAuthenticatedFirebase = async (
     req: RequestWithUser, res: Response, next: NextFunction
-) => {
+): Promise<void> => {
     if (!req.headers.authorization) {
         res.status(403).send({
             message: "Authorization header not found",
@@ -24,8 +24,7 @@ export const ensureAuthenticatedFirebase = async (
     const token = req.headers.authorization.split(" ")[1];
 
     try {
-        const decodedToken = await auth.verifyIdToken(token);
-        req.user = decodedToken;
+        req.user = await auth.verifyIdToken(token);
         next();
     } catch (e) {
         res.status(401).send({

@@ -29,4 +29,15 @@ module.exports = {
         quotes: ["error", "double"],
         indent: ["error", 4],
     },
+    settings: {
+        "import/resolver": {
+            node: {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                ],
+            },
+            typescript: {}, // this loads tsconfig.json to eslint
+        },
+    },
 };

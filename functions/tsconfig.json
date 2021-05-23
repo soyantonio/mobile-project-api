@@ -8,6 +8,11 @@
     "strict": true,
     "target": "es2017",
     "strictNullChecks": true,
+    "baseUrl": "./",
+    "rootDir": "./",
+    "paths": {
+      "@src/*": ["src/*"]
+    }
   },
   "compileOnSave": true,
   "include": [
