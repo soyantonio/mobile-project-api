@@ -1,5 +1,5 @@
 import * as express from "express";
-import * as admin from "firebase-admin";
+// import * as admin from "firebase-admin";
 import Ajv, {JTDSchemaType} from "ajv/dist/jtd";
 import {createToken} from "./services";
 
@@ -42,6 +42,7 @@ user.post("/", (req, res) => {
         return;
     }
     const payload: IRegister = req.body as IRegister;
+    console.log(payload);
 
     res.send({
         token: createToken("helloWorld"),
@@ -56,6 +57,9 @@ user.post("/login", (req, res) => {
     }
 
     const payload: ILogin = req.body as ILogin;
+
+    // admin.auth().
+
     console.log(payload);
 
     res.send({
