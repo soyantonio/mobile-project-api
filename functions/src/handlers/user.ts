@@ -1,6 +1,5 @@
 import "module-alias/register";
 import * as express from "express";
-// import * as admin from "firebase-admin";
 import Ajv, {JTDSchemaType} from "ajv/dist/jtd";
 import {createToken} from "@src/services";
 

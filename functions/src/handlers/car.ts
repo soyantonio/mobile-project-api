@@ -1,9 +1,7 @@
+import "module-alias/register";
 import * as express from "express";
-import {FIREBASE_CONFIG} from "./config";
-import {RequestWithUser} from "./middlewares";
-
-// import {RequestWithUser, ensureAuthenticatedFirebase} from "./middlewares";
-
+import {FIREBASE_CONFIG} from "@src/config";
+import {RequestWithUser} from "@src/middlewares";
 
 export const car = express();
 

@@ -4,8 +4,6 @@ import * as admin from "firebase-admin";
 import {Request, Response, NextFunction} from "express";
 import {TOKEN_SECRET} from "./config";
 
-
-admin.initializeApp();
 const auth = admin.auth();
 
 export interface RequestWithUser extends Request {
