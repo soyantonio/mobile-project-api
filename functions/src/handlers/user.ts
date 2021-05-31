@@ -5,8 +5,6 @@ import "firebase/auth";
 import Ajv, {JTDSchemaType} from "ajv/dist/jtd";
 import {ILogin, IRegister} from "./user.type";
 
-const ajv = new Ajv();
-
 export const user = express();
 
 const loginSchema: JTDSchemaType<ILogin> = {
@@ -23,6 +21,7 @@ const registerSchema: JTDSchemaType<IRegister> = {
     },
 };
 
+const ajv = new Ajv();
 user.post("/signup", async (req, res): Promise<void> => {
     const validateRegister = ajv.compile(registerSchema);
     if (!validateRegister(req.body)) {
