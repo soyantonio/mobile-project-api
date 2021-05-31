@@ -1,4 +1,6 @@
 import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
+import firebase from "firebase";
 export const TOKEN_SECRET = process.env.TOKEN_SECRET || "tokenultrasecreto";
 
 interface IFirebaseConf {
@@ -34,3 +36,7 @@ export const FIREBASE_CONFIG = {
     messagingSenderId: SENDER_ID,
     appId: APP_ID,
 };
+
+
+admin.initializeApp();
+firebase.initializeApp(FIREBASE_CONFIG);
