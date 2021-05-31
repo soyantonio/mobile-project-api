@@ -44,6 +44,23 @@ export const createDeviceHandler:HandlerWithUser = async (req, res) => {
     }
 };
 
+export const listDevicesHandler:HandlerWithUser = async (req, res) => {
+    const user = req.user;
+    if (user == undefined) {
+        res.sendStatus(403);
+        return;
+    }
+    try {
+        const devicesSnapshot = await devicesRef
+            .where("_createdBy", "==", user.uid).get();
+        res.send(devicesSnapshot.docs.map((doc) => doc.data()));
+    } catch {
+        res.status(401).send({
+            message: "Could fetch devices",
+        });
+    }
+};
+
 export const findDeviceById:HandlerWithUser = async (req, res) => {
     const user = req.user;
     if (user == undefined) {
