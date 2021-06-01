@@ -3,6 +3,7 @@ import * as express from "express";
 import {ensureAuthenticatedFirebase, ensureDevice} from "@src/middlewares";
 import {
     createDeviceHandler,
+    deleteDevice,
     findDeviceById,
     listDevicesHandler,
     updateDevice,
@@ -16,4 +17,4 @@ devices.post("/", createDeviceHandler);
 devices.use("/:deviceId", ensureDevice);
 devices.get("/:deviceId", findDeviceById);
 devices.put("/:deviceId", updateDevice);
-
+devices.delete("/:deviceId", deleteDevice);

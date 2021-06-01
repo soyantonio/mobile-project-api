@@ -44,8 +44,8 @@ export const createDeviceHandler:HandlerWithUser = async (req, res) => {
         await devicesRef.doc(device._id ?? DEFAULT_DEVICE_ID).set(device);
         res.send(device);
     } catch {
-        res.status(401).send({
-            message: "Could not create devie",
+        res.status(500).send({
+            message: "Could not create device",
         });
     }
 };
@@ -97,8 +97,21 @@ export const updateDevice:HandlerWithDevice = async (req, res) => {
             .update(deviceUpdated);
         res.send(deviceUpdated);
     } catch {
-        res.status(401).send({
-            message: "Could not update devie",
+        res.status(500).send({
+            message: "Could not update device",
+        });
+    }
+};
+
+export const deleteDevice:HandlerWithDevice = async (req, res) => {
+    const device = req.device as Device;
+
+    try {
+        await devicesRef.doc(device._id ?? DEFAULT_DEVICE_ID).delete();
+        res.send("successful operation");
+    } catch {
+        res.status(500).send({
+            message: "Could not delete device",
         });
     }
 };
