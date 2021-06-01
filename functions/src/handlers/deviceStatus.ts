@@ -61,10 +61,17 @@ const listRecords = async (deviceId?: string): Promise<DeviceStatus[]> => {
     }
 };
 
+const sortDesc= (records: DeviceStatus[]): DeviceStatus[] =>
+    records.sort((a, b) => {
+        const dateA = Date.parse(a._createdAt ?? "");
+        const dateB = Date.parse(b._createdAt ?? "");
+        return dateB - dateA;
+    });
+
 export const listDeviceStatusHandler:HandlerWithDevice = async (
     req, res) => {
     const device = req.device as Device;
-    res.send(await listRecords(device._id));
+    res.send(sortDesc(await listRecords(device._id)));
 };
 
 export const lastDeviceStatusHandler:HandlerWithDevice = async (
@@ -78,11 +85,6 @@ export const lastDeviceStatusHandler:HandlerWithDevice = async (
         return;
     }
 
-    const sortedRecordsDesc = records.sort((a, b) => {
-        const dateA = Date.parse(a._createdAt ?? "");
-        const dateB = Date.parse(b._createdAt ?? "");
-        return dateB - dateA;
-    });
-
+    const sortedRecordsDesc = sortDesc(records);
     res.send(sortedRecordsDesc[0]);
 };

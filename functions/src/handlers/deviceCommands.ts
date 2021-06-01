@@ -67,10 +67,17 @@ const listRecords = async (deviceId?: string): Promise<DeviceCommand[]> => {
     }
 };
 
+const sortDesc= (records: DeviceCommand[]): DeviceCommand[] =>
+    records.sort((a, b) => {
+        const dateA = Date.parse(a._createdAt ?? "");
+        const dateB = Date.parse(b._createdAt ?? "");
+        return dateB - dateA;
+    });
+
 export const listDeviceCommandsHandler:HandlerWithDevice = async (
     req, res) => {
     const device = req.device as Device;
-    res.send(await listRecords(device._id));
+    res.send(sortDesc(await listRecords(device._id)));
 };
 
 export const lastDeviceCommandHandler:HandlerWithDevice = async (
@@ -84,11 +91,6 @@ export const lastDeviceCommandHandler:HandlerWithDevice = async (
         return;
     }
 
-    const sortedRecordsDesc = records.sort((a, b) => {
-        const dateA = Date.parse(a._createdAt ?? "");
-        const dateB = Date.parse(b._createdAt ?? "");
-        return dateB - dateA;
-    });
-
+    const sortedRecordsDesc = sortDesc(records);
     res.send(sortedRecordsDesc[0]);
 };
