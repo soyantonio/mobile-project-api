@@ -1,9 +1,9 @@
 import {Request} from "express";
-import * as admin from "firebase-admin";
 import {Device} from "@src/handlers/device/types";
+import {UserRecord} from "@src/handlers/user.type";
 
 export interface RequestWithUser extends Request {
-    user?: admin.auth.UserRecord;
+    user?: UserRecord;
 }
 
 export type RequestWithDevice<T> = T & {

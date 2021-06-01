@@ -5,6 +5,7 @@ import {
     createDeviceHandler,
     findDeviceById,
     listDevicesHandler,
+    updateDevice,
 } from "./devices";
 
 export const devices = express();
@@ -14,4 +15,5 @@ devices.post("/", createDeviceHandler);
 
 devices.use("/:deviceId", ensureDevice);
 devices.get("/:deviceId", findDeviceById);
+devices.put("/:deviceId", updateDevice);
 

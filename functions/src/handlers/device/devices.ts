@@ -21,6 +21,7 @@ const deviceSchema: JTDSchemaType<Device> = {
     },
 };
 
+const DEFAULT_DEVICE_ID = "";
 const ajv = new Ajv();
 export const createDeviceHandler:HandlerWithUser = async (req, res) => {
     const user = req.user;
@@ -40,7 +41,7 @@ export const createDeviceHandler:HandlerWithUser = async (req, res) => {
         _id: uuidv4(),
     };
     try {
-        await devicesRef.add(device);
+        await devicesRef.doc(device._id ?? DEFAULT_DEVICE_ID).set(device);
         res.send(device);
     } catch {
         res.status(401).send({
@@ -74,4 +75,30 @@ export const findDeviceById:HandlerWithDevice = async (req, res) => {
         return;
     }
     res.send(device);
+};
+
+export const updateDevice:HandlerWithDevice = async (req, res) => {
+    const device = req.device as Device;
+    const validateDevice = ajv.compile(deviceSchema);
+
+    if (!validateDevice(req.body)) {
+        res.status(400).send(validateDevice.errors).end();
+        return;
+    }
+
+    const payload: Device = req.body as Device;
+    const deviceUpdated: Device = {
+        ...payload,
+        _createdBy: device._createdBy,
+        _id: device._id,
+    };
+    try {
+        await devicesRef.doc(device._id ?? DEFAULT_DEVICE_ID)
+            .update(deviceUpdated);
+        res.send(deviceUpdated);
+    } catch {
+        res.status(401).send({
+            message: "Could not update devie",
+        });
+    }
 };
