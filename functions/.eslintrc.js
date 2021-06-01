@@ -19,6 +19,7 @@ module.exports = {
     },
     ignorePatterns: [
         "/lib/**/*", // Ignore built files.
+        "/node_modules/ajv/*",
     ],
     plugins: [
         "@typescript-eslint",
@@ -27,5 +28,16 @@ module.exports = {
     rules: {
         quotes: ["error", "double"],
         indent: ["error", 4],
+    },
+    settings: {
+        "import/resolver": {
+            node: {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                ],
+            },
+            typescript: {}, // this loads tsconfig.json to eslint
+        },
     },
 };
