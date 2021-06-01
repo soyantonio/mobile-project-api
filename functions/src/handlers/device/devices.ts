@@ -2,7 +2,12 @@ import "module-alias/register";
 import Ajv, {JTDSchemaType} from "ajv/dist/jtd";
 import {v4 as uuidv4} from "uuid";
 import {devicesRef} from "@src/datastore";
-import {Device, DeviceVariant, HandlerWithUser} from "./types";
+import {
+    Device,
+    DeviceVariant,
+    HandlerWithUser,
+    HandlerWithDevice,
+} from "./types";
 
 const deviceSchema: JTDSchemaType<Device> = {
     properties: {
@@ -61,13 +66,12 @@ export const listDevicesHandler:HandlerWithUser = async (req, res) => {
     }
 };
 
-export const findDeviceById:HandlerWithUser = async (req, res) => {
+export const findDeviceById:HandlerWithDevice = async (req, res) => {
     const user = req.user;
+    const device = req.device as Device;
     if (user == undefined) {
         res.sendStatus(403);
         return;
     }
-
-    console.log(user);
-    res.send("Hello World");
+    res.send(device);
 };

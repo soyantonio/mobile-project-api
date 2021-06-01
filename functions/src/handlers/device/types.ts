@@ -1,9 +1,12 @@
 import "module-alias/register";
 import {Response} from "express";
-import {RequestWithUser} from "@src/middleware.types";
+import {RequestWithDevice, RequestWithUser} from "@src/middleware.types";
 
-export type HandlerWithUser = (
-    req: RequestWithUser, res: Response) => Promise<void>;
+export type HandlerWith<T> = (
+    req: T, res: Response) => Promise<void>;
+
+export type HandlerWithUser = HandlerWith<RequestWithUser>
+export type HandlerWithDevice = HandlerWith<RequestWithDevice<RequestWithUser>>
 
 export enum DeviceVariant {
     Console = "console",

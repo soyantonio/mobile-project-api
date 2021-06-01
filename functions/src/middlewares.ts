@@ -6,6 +6,7 @@ import {QuerySnapshot} from "@google-cloud/firestore";
 import {Response, NextFunction} from "express";
 import {devicesRef} from "@src/datastore";
 import {RequestWithDevice, RequestWithUser} from "@src/middleware.types";
+import {Device} from "@src/handlers/device/types";
 import {TOKEN_SECRET} from "./config";
 
 
@@ -56,21 +57,37 @@ export const ensureAuthenticated = async (
     next();
 };
 
-const getDevice = (deviceId: string): Promise<QuerySnapshot> =>
-    devicesRef.where("_id", "==", deviceId).limit(1).get();
+const getDevice = (deviceId: string, userId: string): Promise<QuerySnapshot> =>
+    devicesRef
+        .where("_id", "==", deviceId)
+        .where("_createdBy", "==", userId)
+        .limit(1).get();
 
 export const ensureDevice = async (
     req: RequestWithDevice<RequestWithUser>, res: Response, next: NextFunction
 ): Promise<void> => {
     const deviceId = req.params.deviceId;
+    console.log(req.params);
     if (!deviceId) {
         res.status(403).send({
             message: "Missing device id",
         });
         return;
     }
-    await getDevice(deviceId);
+    const user = req.user;
+    if (user == undefined) {
+        res.sendStatus(403);
+        return;
+    }
 
-    console.log("Hola");
-    next();
+    try {
+        req.device = (await getDevice(deviceId, user.uid))
+            .docs[0].data() as Device;
+        next();
+    } catch {
+        res.status(404).send({
+            message: "Could not found device",
+        });
+        return;
+    }
 };
